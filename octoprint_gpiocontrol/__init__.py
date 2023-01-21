@@ -13,6 +13,7 @@ class GpioControlPlugin(
     octoprint.plugin.AssetPlugin,
     octoprint.plugin.SettingsPlugin,
     octoprint.plugin.SimpleApiPlugin,
+    octoprint.plugin.BlueprintPlugin,
     octoprint.plugin.RestartNeedingPlugin,
 ):
     mode = None
@@ -122,6 +123,12 @@ class GpioControlPlugin(
     def get_api_commands(self):
         return dict(turnGpioOn=["id"], turnGpioOff=["id"], getGpioState=["id"])
 
+    
+    @octoprint.plugin.BlueprintPlugin.route("/state", methods=["POST"])
+    def request_api_state(self):
+        return on_api_command(self, command, data)
+    
+    
     def on_api_command(self, command, data):
         if not user_permission.can():
             return flask.make_response("Insufficient rights", 403)
